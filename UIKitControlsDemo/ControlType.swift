@@ -1,3 +1,12 @@
+//
+//  ControlType.swift
+//  UIKitControlsDemo
+//
+//  Created by devlink on 2025/10/21.
+//
+
+import Foundation
+
 // MARK: - Control Type
 enum ControlType {
     case label

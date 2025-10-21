@@ -1,5 +1,5 @@
 //
-//  AutoLayoutViewController.swift
+//  ViewController.swift
 //  UIKitControlsDemo
 //
 //  Created by devlink on 2025/10/21.
@@ -76,7 +76,7 @@ extension ViewController: UITableViewDataSource, UITableViewDelegate {
         tableView.deselectRow(at: indexPath, animated: true)
         
         let controlType = controls[indexPath.row].type
-        let detailVC = AutoLayoutControlDetailViewController(controlType: controlType)
+        let detailVC = ControlDetailViewController(controlType: controlType)
         detailVC.title = controls[indexPath.row].title
         navigationController?.pushViewController(detailVC, animated: true)
     }

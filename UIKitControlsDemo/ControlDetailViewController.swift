@@ -1,5 +1,5 @@
 //
-//  AutoLayoutControlDetailViewController 2.swift
+//  ControlDetailViewController.swift
 //  UIKitControlsDemo
 //
 //  Created by devlink on 2025/10/21.
