@@ -5,10 +5,11 @@
 //  Created by devlink on 2025/10/21.
 //
 
+
 import UIKit
 
 class ViewController: UIViewController {
-
+    
     // MARK: - Properties
     private let tableView = UITableView()
     private let controls: [(title: String, type: ControlType)] = [
@@ -39,13 +40,22 @@ class ViewController: UIViewController {
         title = "UIKit 控件演示"
         view.backgroundColor = .systemBackground
         
-        // 设置表格视图
-        tableView.frame = view.bounds
-        tableView.autoresizingMask = [.flexibleWidth, .flexibleHeight]
+        setupTableView()
+    }
+    
+    private func setupTableView() {
+        tableView.translatesAutoresizingMaskIntoConstraints = false
         tableView.delegate = self
         tableView.dataSource = self
         tableView.register(UITableViewCell.self, forCellReuseIdentifier: "cell")
         view.addSubview(tableView)
+        
+        NSLayoutConstraint.activate([
+            tableView.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor),
+            tableView.leadingAnchor.constraint(equalTo: view.leadingAnchor),
+            tableView.trailingAnchor.constraint(equalTo: view.trailingAnchor),
+            tableView.bottomAnchor.constraint(equalTo: view.bottomAnchor)
+        ])
     }
 }
 
@@ -71,23 +81,3 @@ extension ViewController: UITableViewDataSource, UITableViewDelegate {
         navigationController?.pushViewController(detailVC, animated: true)
     }
 }
-
-// MARK: - Control Type
-enum ControlType {
-    case label
-    case button
-    case textField
-    case textView
-    case switchControl
-    case slider
-    case segmentedControl
-    case activityIndicator
-    case progressView
-    case stepper
-    case datePicker
-    case pickerView
-    case imageView
-    case alertController
-}
-
-
