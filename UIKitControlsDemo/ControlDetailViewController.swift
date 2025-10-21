@@ -1,5 +1,5 @@
 //
-//  ControlDetailViewController.swift
+//  AutoLayoutControlDetailViewController 2.swift
 //  UIKitControlsDemo
 //
 //  Created by devlink on 2025/10/21.
@@ -14,6 +14,7 @@ class ControlDetailViewController: UIViewController {
     private let controlType: ControlType
     private let scrollView = UIScrollView()
     private let contentView = UIView()
+    private var stackView: UIStackView!
     
     // 存储控件的引用
     private var statusLabel: UILabel?
@@ -51,21 +52,59 @@ class ControlDetailViewController: UIViewController {
     private func setupUI() {
         view.backgroundColor = .systemBackground
         
-        // 设置滚动视图
-        scrollView.frame = view.bounds
-        scrollView.autoresizingMask = [.flexibleWidth, .flexibleHeight]
+        setupScrollView()
+        setupContentView()
+        setupStackView()
+    }
+    
+    private func setupScrollView() {
+        scrollView.translatesAutoresizingMaskIntoConstraints = false
         scrollView.alwaysBounceVertical = true
         view.addSubview(scrollView)
         
-        // 内容视图
-        contentView.frame = CGRect(x: 0, y: 0, width: view.bounds.width, height: 0)
+        NSLayoutConstraint.activate([
+            scrollView.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor),
+            scrollView.leadingAnchor.constraint(equalTo: view.leadingAnchor),
+            scrollView.trailingAnchor.constraint(equalTo: view.trailingAnchor),
+            scrollView.bottomAnchor.constraint(equalTo: view.bottomAnchor)
+        ])
+    }
+    
+    private func setupContentView() {
+        contentView.translatesAutoresizingMaskIntoConstraints = false
         scrollView.addSubview(contentView)
+        
+        NSLayoutConstraint.activate([
+            contentView.topAnchor.constraint(equalTo: scrollView.topAnchor),
+            contentView.leadingAnchor.constraint(equalTo: scrollView.leadingAnchor),
+            contentView.trailingAnchor.constraint(equalTo: scrollView.trailingAnchor),
+            contentView.bottomAnchor.constraint(equalTo: scrollView.bottomAnchor),
+            contentView.widthAnchor.constraint(equalTo: scrollView.widthAnchor)
+        ])
+    }
+    
+    private func setupStackView() {
+        stackView = UIStackView()
+        stackView.translatesAutoresizingMaskIntoConstraints = false
+        stackView.axis = .vertical
+        stackView.spacing = 20
+        stackView.alignment = .fill
+        stackView.distribution = .fill
+        
+        contentView.addSubview(stackView)
+        
+        NSLayoutConstraint.activate([
+            stackView.topAnchor.constraint(equalTo: contentView.topAnchor, constant: 20),
+            stackView.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: 20),
+            stackView.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: -20),
+            stackView.bottomAnchor.constraint(equalTo: contentView.bottomAnchor, constant: -20)
+        ])
     }
     
     // MARK: - Control Demos
     private func setupControlDemo() {
-        // 重置内容视图
-        contentView.subviews.forEach { $0.removeFromSuperview() }
+        // 添加标题
+//        addTitleLabel()
         
         switch controlType {
         case .label:
@@ -97,296 +136,343 @@ class ControlDetailViewController: UIViewController {
         case .alertController:
             setupAlertDemo()
         }
-        
-        // 更新内容视图高度
-        let lastSubview = contentView.subviews.last
-        contentView.frame.size.height = (lastSubview?.frame.maxY ?? 0) + 20
-        scrollView.contentSize = contentView.frame.size
+    }
+    
+    private func addTitleLabel() {
+        let titleLabel = UILabel()
+        titleLabel.text = title
+        titleLabel.font = UIFont.boldSystemFont(ofSize: 24)
+        titleLabel.textAlignment = .center
+        titleLabel.textColor = .label
+        stackView.addArrangedSubview(titleLabel)
     }
     
     // MARK: - 各个控件的演示方法
     private func setupLabelDemo() {
-        addTitleLabel("UILabel 演示")
+        addSectionTitle("基本标签")
         
-        // 基本标签
         let basicLabel = UILabel()
         basicLabel.text = "这是一个基本标签"
         basicLabel.textColor = .label
-        basicLabel.frame = CGRect(x: 20, y: 60, width: view.bounds.width - 40, height: 30)
-        contentView.addSubview(basicLabel)
+        basicLabel.textAlignment = .center
+        stackView.addArrangedSubview(basicLabel)
         
-        // 带样式的标签
+        addSectionTitle("带样式的标签")
+        
         let styledLabel = UILabel()
         styledLabel.text = "带样式的标签"
         styledLabel.textColor = .systemBlue
         styledLabel.font = UIFont.boldSystemFont(ofSize: 18)
         styledLabel.textAlignment = .center
         styledLabel.backgroundColor = .systemGray6
-        styledLabel.frame = CGRect(x: 20, y: 110, width: view.bounds.width - 40, height: 40)
-        contentView.addSubview(styledLabel)
+        styledLabel.layer.cornerRadius = 8
+        styledLabel.clipsToBounds = true
+        styledLabel.heightAnchor.constraint(equalToConstant: 44).isActive = true
+        stackView.addArrangedSubview(styledLabel)
         
-        // 多行标签
+        addSectionTitle("多行标签")
+        
         let multilineLabel = UILabel()
-        multilineLabel.text = "这是一个多行标签，可以显示多行文本内容。UILabel 是 UIKit 中最常用的控件之一。"
+        multilineLabel.text = "这是一个多行标签，可以显示多行文本内容。UILabel 是 UIKit 中最常用的控件之一，支持丰富的文本显示功能。"
         multilineLabel.textColor = .label
         multilineLabel.numberOfLines = 0
-        multilineLabel.frame = CGRect(x: 20, y: 170, width: view.bounds.width - 40, height: 80)
-        contentView.addSubview(multilineLabel)
+        multilineLabel.textAlignment = .center
+        stackView.addArrangedSubview(multilineLabel)
+        
+        addSectionTitle("富文本标签")
+        
+        let attributedLabel = UILabel()
+        let attributedString = NSMutableAttributedString(string: "富文本标签演示")
+        attributedString.addAttribute(.foregroundColor, value: UIColor.systemRed, range: NSRange(location: 0, length: 3))
+        attributedString.addAttribute(.foregroundColor, value: UIColor.systemGreen, range: NSRange(location: 3, length: 2))
+        attributedString.addAttribute(.font, value: UIFont.boldSystemFont(ofSize: 20), range: NSRange(location: 0, length: 5))
+        attributedLabel.attributedText = attributedString
+        attributedLabel.textAlignment = .center
+        stackView.addArrangedSubview(attributedLabel)
     }
     
     private func setupButtonDemo() {
-        addTitleLabel("UIButton 演示")
+        addSectionTitle("系统按钮")
         
-        var currentY: CGFloat = 60
-        
-        // 系统按钮
         let systemButton = UIButton(type: .system)
         systemButton.setTitle("系统样式按钮", for: .normal)
-        systemButton.frame = CGRect(x: 20, y: currentY, width: view.bounds.width - 40, height: 44)
+        systemButton.heightAnchor.constraint(equalToConstant: 44).isActive = true
         systemButton.addTarget(self, action: #selector(buttonTapped), for: .touchUpInside)
-        contentView.addSubview(systemButton)
+        stackView.addArrangedSubview(systemButton)
         
-        currentY += 60
+        addSectionTitle("自定义按钮")
         
-        // 自定义按钮
         let customButton = UIButton(type: .custom)
         customButton.setTitle("自定义按钮", for: .normal)
         customButton.setTitleColor(.white, for: .normal)
         customButton.backgroundColor = .systemBlue
         customButton.layer.cornerRadius = 8
-        customButton.frame = CGRect(x: 20, y: currentY, width: view.bounds.width - 40, height: 44)
+        customButton.heightAnchor.constraint(equalToConstant: 44).isActive = true
         customButton.addTarget(self, action: #selector(buttonTapped), for: .touchUpInside)
-        contentView.addSubview(customButton)
+        stackView.addArrangedSubview(customButton)
         
-        currentY += 60
+        addSectionTitle("带图标的按钮")
         
-        // 带图片的按钮
         let imageButton = UIButton(type: .system)
         imageButton.setTitle("带图标的按钮", for: .normal)
         imageButton.setImage(UIImage(systemName: "star.fill"), for: .normal)
         imageButton.tintColor = .systemYellow
-        imageButton.frame = CGRect(x: 20, y: currentY, width: view.bounds.width - 40, height: 44)
+        imageButton.heightAnchor.constraint(equalToConstant: 44).isActive = true
         imageButton.addTarget(self, action: #selector(buttonTapped), for: .touchUpInside)
-        contentView.addSubview(imageButton)
+        stackView.addArrangedSubview(imageButton)
     }
     
     private func setupTextFieldDemo() {
-        addTitleLabel("UITextField 演示")
+        addSectionTitle("基本文本输入框")
         
-        var currentY: CGFloat = 60
-        
-        // 基本文本输入框
         let basicTextField = UITextField()
         basicTextField.placeholder = "请输入文本"
         basicTextField.borderStyle = .roundedRect
-        basicTextField.frame = CGRect(x: 20, y: currentY, width: view.bounds.width - 40, height: 44)
-        contentView.addSubview(basicTextField)
+        basicTextField.heightAnchor.constraint(equalToConstant: 44).isActive = true
+        stackView.addArrangedSubview(basicTextField)
         
-        currentY += 60
+        addSectionTitle("带图标的文本输入框")
         
-        // 带图标的文本输入框
         let iconTextField = UITextField()
         iconTextField.placeholder = "带图标的输入框"
         iconTextField.borderStyle = .roundedRect
+        
         let leftView = UIImageView(image: UIImage(systemName: "envelope"))
         leftView.tintColor = .systemGray
         leftView.frame = CGRect(x: 0, y: 0, width: 30, height: 20)
         leftView.contentMode = .scaleAspectFit
+        
         iconTextField.leftView = leftView
         iconTextField.leftViewMode = .always
-        iconTextField.frame = CGRect(x: 20, y: currentY, width: view.bounds.width - 40, height: 44)
-        contentView.addSubview(iconTextField)
+        iconTextField.heightAnchor.constraint(equalToConstant: 44).isActive = true
+        stackView.addArrangedSubview(iconTextField)
         
-        currentY += 60
+        addSectionTitle("安全文本输入框")
         
-        // 安全文本输入框
         let secureTextField = UITextField()
         secureTextField.placeholder = "请输入密码"
         secureTextField.borderStyle = .roundedRect
         secureTextField.isSecureTextEntry = true
-        secureTextField.frame = CGRect(x: 20, y: currentY, width: view.bounds.width - 40, height: 44)
-        contentView.addSubview(secureTextField)
+        secureTextField.heightAnchor.constraint(equalToConstant: 44).isActive = true
+        stackView.addArrangedSubview(secureTextField)
         
-        currentY += 60
-        
-        // 添加说明标签
-        let descriptionLabel = UILabel()
-        descriptionLabel.text = "点击输入框开始输入，点击空白处结束编辑"
-        descriptionLabel.textColor = .systemGray
-        descriptionLabel.font = UIFont.systemFont(ofSize: 14)
-        descriptionLabel.numberOfLines = 0
-        descriptionLabel.frame = CGRect(x: 20, y: currentY, width: view.bounds.width - 40, height: 40)
-        contentView.addSubview(descriptionLabel)
+        addDescriptionLabel("点击输入框开始输入，点击空白处结束编辑")
     }
     
     private func setupTextViewDemo() {
-        addTitleLabel("UITextView 演示")
+        addSectionTitle("多行文本视图")
         
         let textView = UITextView()
-        textView.text = "这是一个 UITextView，支持多行文本输入和显示。\n\n你可以在这里输入大量的文本内容，支持滚动查看。UITextView 提供了丰富的文本编辑功能。"
+        textView.text = "这是一个 UITextView，支持多行文本输入和显示。\n\n你可以在这里输入大量的文本内容，支持滚动查看。UITextView 提供了丰富的文本编辑功能，包括字体、颜色、对齐方式等设置。"
         textView.font = UIFont.systemFont(ofSize: 16)
         textView.layer.borderWidth = 1
         textView.layer.borderColor = UIColor.systemGray4.cgColor
         textView.layer.cornerRadius = 8
-        textView.frame = CGRect(x: 20, y: 60, width: view.bounds.width - 40, height: 200)
-        contentView.addSubview(textView)
+        textView.heightAnchor.constraint(equalToConstant: 200).isActive = true
+        stackView.addArrangedSubview(textView)
+        
+        addDescriptionLabel("UITextView 支持滚动和丰富的文本编辑功能")
     }
     
     private func setupSwitchDemo() {
-        addTitleLabel("UISwitch 演示")
+        addSectionTitle("开关控件")
+        
+        let switchContainer = UIView()
+        switchContainer.translatesAutoresizingMaskIntoConstraints = false
         
         let switchControl = UISwitch()
+        switchControl.translatesAutoresizingMaskIntoConstraints = false
         switchControl.isOn = true
-        switchControl.frame.origin = CGPoint(x: 20, y: 60)
         switchControl.addTarget(self, action: #selector(switchValueChanged(_:)), for: .valueChanged)
-        contentView.addSubview(switchControl)
         
         statusLabel = UILabel()
+        statusLabel!.translatesAutoresizingMaskIntoConstraints = false
         statusLabel!.text = "开关状态: 开启"
-        statusLabel!.frame = CGRect(x: 100, y: 60, width: 200, height: 31)
-        contentView.addSubview(statusLabel!)
+        
+        switchContainer.addSubview(switchControl)
+        switchContainer.addSubview(statusLabel!)
+        
+        NSLayoutConstraint.activate([
+            switchControl.leadingAnchor.constraint(equalTo: switchContainer.leadingAnchor),
+            switchControl.centerYAnchor.constraint(equalTo: switchContainer.centerYAnchor),
+            
+            statusLabel!.leadingAnchor.constraint(equalTo: switchControl.trailingAnchor, constant: 20),
+            statusLabel!.centerYAnchor.constraint(equalTo: switchContainer.centerYAnchor),
+            statusLabel!.trailingAnchor.constraint(equalTo: switchContainer.trailingAnchor),
+            
+            switchContainer.heightAnchor.constraint(equalToConstant: 44)
+        ])
+        
+        stackView.addArrangedSubview(switchContainer)
     }
     
     private func setupSliderDemo() {
-        addTitleLabel("UISlider 演示")
+        addSectionTitle("滑块控件")
         
         let slider = UISlider()
         slider.minimumValue = 0
         slider.maximumValue = 100
         slider.value = 50
-        slider.frame = CGRect(x: 20, y: 60, width: view.bounds.width - 40, height: 40)
         slider.addTarget(self, action: #selector(sliderValueChanged(_:)), for: .valueChanged)
-        contentView.addSubview(slider)
+        stackView.addArrangedSubview(slider)
         
         valueLabel = UILabel()
         valueLabel!.text = "当前值: 50"
         valueLabel!.textAlignment = .center
-        valueLabel!.frame = CGRect(x: 20, y: 110, width: view.bounds.width - 40, height: 30)
-        contentView.addSubview(valueLabel!)
+        stackView.addArrangedSubview(valueLabel!)
     }
     
     private func setupSegmentedControlDemo() {
-        addTitleLabel("UISegmentedControl 演示")
+        addSectionTitle("分段控件")
         
         let segmentedControl = UISegmentedControl(items: ["选项一", "选项二", "选项三"])
         segmentedControl.selectedSegmentIndex = 0
-        segmentedControl.frame = CGRect(x: 20, y: 60, width: view.bounds.width - 40, height: 40)
         segmentedControl.addTarget(self, action: #selector(segmentedControlValueChanged(_:)), for: .valueChanged)
-        contentView.addSubview(segmentedControl)
+        stackView.addArrangedSubview(segmentedControl)
         
         selectedLabel = UILabel()
         selectedLabel!.text = "选中: 选项一"
         selectedLabel!.textAlignment = .center
-        selectedLabel!.frame = CGRect(x: 20, y: 120, width: view.bounds.width - 40, height: 30)
-        contentView.addSubview(selectedLabel!)
+        stackView.addArrangedSubview(selectedLabel!)
     }
     
     private func setupActivityIndicatorDemo() {
-        addTitleLabel("UIActivityIndicatorView 演示")
+        addSectionTitle("活动指示器")
+        
+        let containerView = UIView()
+        containerView.translatesAutoresizingMaskIntoConstraints = false
         
         let activityIndicator = UIActivityIndicatorView(style: .large)
-        activityIndicator.center = CGPoint(x: view.bounds.width / 2, y: 100)
+        activityIndicator.translatesAutoresizingMaskIntoConstraints = false
         activityIndicator.startAnimating()
         activityIndicator.color = .systemBlue
-        contentView.addSubview(activityIndicator)
         
-        let descriptionLabel = UILabel()
-        descriptionLabel.text = "活动指示器正在旋转，通常用于表示任务正在进行中"
-        descriptionLabel.textAlignment = .center
-        descriptionLabel.numberOfLines = 0
-        descriptionLabel.frame = CGRect(x: 20, y: 180, width: view.bounds.width - 40, height: 60)
-        contentView.addSubview(descriptionLabel)
+        containerView.addSubview(activityIndicator)
+        
+        NSLayoutConstraint.activate([
+            activityIndicator.centerXAnchor.constraint(equalTo: containerView.centerXAnchor),
+            activityIndicator.centerYAnchor.constraint(equalTo: containerView.centerYAnchor),
+            containerView.heightAnchor.constraint(equalToConstant: 100)
+        ])
+        
+        stackView.addArrangedSubview(containerView)
+        
+        addDescriptionLabel("活动指示器正在旋转，通常用于表示任务正在进行中")
     }
     
     private func setupProgressViewDemo() {
-        addTitleLabel("UIProgressView 演示")
+        addSectionTitle("进度条")
         
         progressView = UIProgressView(progressViewStyle: .default)
         progressView!.progress = 0.0
-        progressView!.frame = CGRect(x: 20, y: 60, width: view.bounds.width - 40, height: 4)
-        contentView.addSubview(progressView!)
+        stackView.addArrangedSubview(progressView!)
         
         progressLabel = UILabel()
         progressLabel!.text = "进度: 0%"
         progressLabel!.textAlignment = .center
-        progressLabel!.frame = CGRect(x: 20, y: 80, width: view.bounds.width - 40, height: 30)
-        contentView.addSubview(progressLabel!)
+        stackView.addArrangedSubview(progressLabel!)
+        
+        let buttonStack = UIStackView()
+        buttonStack.axis = .horizontal
+        buttonStack.spacing = 20
+        buttonStack.distribution = .fillEqually
         
         let startButton = UIButton(type: .system)
         startButton.setTitle("开始进度", for: .normal)
-        startButton.frame = CGRect(x: 20, y: 130, width: view.bounds.width - 40, height: 44)
+        startButton.backgroundColor = .systemBlue
+        startButton.setTitleColor(.white, for: .normal)
+        startButton.layer.cornerRadius = 8
+        startButton.heightAnchor.constraint(equalToConstant: 44).isActive = true
         startButton.addTarget(self, action: #selector(startProgress), for: .touchUpInside)
-        contentView.addSubview(startButton)
         
         let resetButton = UIButton(type: .system)
         resetButton.setTitle("重置进度", for: .normal)
-        resetButton.frame = CGRect(x: 20, y: 190, width: view.bounds.width - 40, height: 44)
+        resetButton.backgroundColor = .systemGray
+        resetButton.setTitleColor(.white, for: .normal)
+        resetButton.layer.cornerRadius = 8
+        resetButton.heightAnchor.constraint(equalToConstant: 44).isActive = true
         resetButton.addTarget(self, action: #selector(resetProgress), for: .touchUpInside)
-        contentView.addSubview(resetButton)
+        
+        buttonStack.addArrangedSubview(startButton)
+        buttonStack.addArrangedSubview(resetButton)
+        
+        stackView.addArrangedSubview(buttonStack)
     }
     
     private func setupStepperDemo() {
-        addTitleLabel("UIStepper 演示")
+        addSectionTitle("步进器")
+        
+        let stepperContainer = UIView()
+        stepperContainer.translatesAutoresizingMaskIntoConstraints = false
         
         let stepper = UIStepper()
+        stepper.translatesAutoresizingMaskIntoConstraints = false
         stepper.minimumValue = 0
         stepper.maximumValue = 10
         stepper.stepValue = 1
         stepper.value = 5
-        stepper.frame.origin = CGPoint(x: 20, y: 60)
         stepper.addTarget(self, action: #selector(stepperValueChanged(_:)), for: .valueChanged)
-        contentView.addSubview(stepper)
         
         valueLabel = UILabel()
+        valueLabel!.translatesAutoresizingMaskIntoConstraints = false
         valueLabel!.text = "当前值: 5"
-        valueLabel!.frame = CGRect(x: 120, y: 60, width: 200, height: 31)
-        contentView.addSubview(valueLabel!)
+        
+        stepperContainer.addSubview(stepper)
+        stepperContainer.addSubview(valueLabel!)
+        
+        NSLayoutConstraint.activate([
+            stepper.leadingAnchor.constraint(equalTo: stepperContainer.leadingAnchor),
+            stepper.centerYAnchor.constraint(equalTo: stepperContainer.centerYAnchor),
+            
+            valueLabel!.leadingAnchor.constraint(equalTo: stepper.trailingAnchor, constant: 20),
+            valueLabel!.centerYAnchor.constraint(equalTo: stepperContainer.centerYAnchor),
+            valueLabel!.trailingAnchor.constraint(equalTo: stepperContainer.trailingAnchor),
+            
+            stepperContainer.heightAnchor.constraint(equalToConstant: 44)
+        ])
+        
+        stackView.addArrangedSubview(stepperContainer)
     }
     
     private func setupDatePickerDemo() {
-        addTitleLabel("UIDatePicker 演示")
+        addSectionTitle("日期选择器")
         
         let datePicker = UIDatePicker()
         datePicker.datePickerMode = .dateAndTime
         datePicker.preferredDatePickerStyle = .wheels
-        datePicker.frame = CGRect(x: 0, y: 60, width: view.bounds.width, height: 200)
         datePicker.addTarget(self, action: #selector(datePickerValueChanged(_:)), for: .valueChanged)
-        contentView.addSubview(datePicker)
+        stackView.addArrangedSubview(datePicker)
         
         selectedLabel = UILabel()
         selectedLabel!.text = "选择的日期和时间将显示在这里"
         selectedLabel!.textAlignment = .center
         selectedLabel!.numberOfLines = 0
-        selectedLabel!.frame = CGRect(x: 20, y: 280, width: view.bounds.width - 40, height: 60)
-        contentView.addSubview(selectedLabel!)
+        stackView.addArrangedSubview(selectedLabel!)
         
         // 初始显示当前日期
         datePickerValueChanged(datePicker)
     }
     
     private func setupPickerViewDemo() {
-        addTitleLabel("UIPickerView 演示")
+        addSectionTitle("选择器")
         
         let pickerView = UIPickerView()
         pickerView.delegate = self
         pickerView.dataSource = self
-        pickerView.frame = CGRect(x: 0, y: 60, width: view.bounds.width, height: 200)
-        contentView.addSubview(pickerView)
+        pickerView.heightAnchor.constraint(equalToConstant: 150).isActive = true
+        stackView.addArrangedSubview(pickerView)
         
         selectedLabel = UILabel()
         selectedLabel!.text = "选择的内容将显示在这里"
         selectedLabel!.textAlignment = .center
-        selectedLabel!.frame = CGRect(x: 20, y: 280, width: view.bounds.width - 40, height: 30)
-        contentView.addSubview(selectedLabel!)
+        stackView.addArrangedSubview(selectedLabel!)
         
         // 初始显示第一个选项
-        if selectedLabel != nil {
-            selectedLabel!.text = "选择了: 选项 1"
-        }
+        selectedLabel!.text = "选择了: 选项 1"
     }
     
     private func setupImageViewDemo() {
-        addTitleLabel("UIImageView 演示")
+        addSectionTitle("图片视图")
         
         let imageView = UIImageView()
         imageView.contentMode = .scaleAspectFit
@@ -397,46 +483,54 @@ class ControlDetailViewController: UIViewController {
             imageView.image = image
         }
         
-        imageView.frame = CGRect(x: 50, y: 60, width: view.bounds.width - 100, height: 200)
         imageView.tintColor = .systemBlue
-        contentView.addSubview(imageView)
+        imageView.heightAnchor.constraint(equalToConstant: 200).isActive = true
+        stackView.addArrangedSubview(imageView)
         
-        let descriptionLabel = UILabel()
-        descriptionLabel.text = "UIImageView 用于显示图片，支持多种内容模式"
-        descriptionLabel.textAlignment = .center
-        descriptionLabel.numberOfLines = 0
-        descriptionLabel.frame = CGRect(x: 20, y: 280, width: view.bounds.width - 40, height: 60)
-        contentView.addSubview(descriptionLabel)
+        addDescriptionLabel("UIImageView 用于显示图片，支持多种内容模式")
     }
     
     private func setupAlertDemo() {
-        addTitleLabel("UIAlertController 演示")
-        
-        var currentY: CGFloat = 60
+        addSectionTitle("警告框演示")
         
         let showAlertButton = UIButton(type: .system)
         showAlertButton.setTitle("显示警告框", for: .normal)
-        showAlertButton.frame = CGRect(x: 20, y: currentY, width: view.bounds.width - 40, height: 44)
+        showAlertButton.backgroundColor = .systemOrange
+        showAlertButton.setTitleColor(.white, for: .normal)
+        showAlertButton.layer.cornerRadius = 8
+        showAlertButton.heightAnchor.constraint(equalToConstant: 44).isActive = true
         showAlertButton.addTarget(self, action: #selector(showAlert), for: .touchUpInside)
-        contentView.addSubview(showAlertButton)
+        stackView.addArrangedSubview(showAlertButton)
         
-        currentY += 60
+        addSectionTitle("操作菜单演示")
         
         let showActionSheetButton = UIButton(type: .system)
         showActionSheetButton.setTitle("显示操作菜单", for: .normal)
-        showActionSheetButton.frame = CGRect(x: 20, y: currentY, width: view.bounds.width - 40, height: 44)
+        showActionSheetButton.backgroundColor = .systemPurple
+        showActionSheetButton.setTitleColor(.white, for: .normal)
+        showActionSheetButton.layer.cornerRadius = 8
+        showActionSheetButton.heightAnchor.constraint(equalToConstant: 44).isActive = true
         showActionSheetButton.addTarget(self, action: #selector(showActionSheet), for: .touchUpInside)
-        contentView.addSubview(showActionSheetButton)
+        stackView.addArrangedSubview(showActionSheetButton)
     }
     
     // MARK: - Helper Methods
-    private func addTitleLabel(_ text: String) {
+    private func addSectionTitle(_ text: String) {
         let titleLabel = UILabel()
         titleLabel.text = text
-        titleLabel.font = UIFont.boldSystemFont(ofSize: 20)
-        titleLabel.textAlignment = .center
-        titleLabel.frame = CGRect(x: 20, y: 20, width: view.bounds.width - 40, height: 30)
-        contentView.addSubview(titleLabel)
+        titleLabel.font = UIFont.boldSystemFont(ofSize: 18)
+        titleLabel.textColor = .label
+        stackView.addArrangedSubview(titleLabel)
+    }
+    
+    private func addDescriptionLabel(_ text: String) {
+        let descriptionLabel = UILabel()
+        descriptionLabel.text = text
+        descriptionLabel.font = UIFont.systemFont(ofSize: 14)
+        descriptionLabel.textColor = .systemGray
+        descriptionLabel.numberOfLines = 0
+        descriptionLabel.textAlignment = .center
+        stackView.addArrangedSubview(descriptionLabel)
     }
     
     // MARK: - Action Methods
