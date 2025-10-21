@@ -39,10 +39,11 @@
 
 ```
 UIKitControlsDemo/
-├── AppDelegate.swift          # 应用入口和窗口设置
-├── ViewController.swift        # 主列表页面
+├── AppDelegate.swift          # 应用入口和生命周期管理
+├── SceneDelegate.swift        # 场景管理和窗口设置
+├── ViewController.swift       # 主列表页面
 ├── ControlDetailViewController.swift # 控件详情页面
-├── Assets.xcassets        # 应用图标和图片资源
+├── Assets.xcassets       # 应用图标和图片资源
 └── Info.plist            # 应用配置信息
 ```
 
