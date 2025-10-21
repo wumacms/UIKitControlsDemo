@@ -2,7 +2,7 @@
 
 一个使用纯代码 UIKit 编写的控件演示应用，展示了 iOS 开发中常用的 UIKit 控件及其用法。
 
-![Platform](https://img.shields.io/badge/platform-iOS-blue.svg)![Swift](https://img.shields.io/badge/Swift-5.0-orange.svg)![License](https://img.shields.io/badge/license-MIT-lightgrey.svg)
+![Platform](https://img.shields.io/badge/platform-iOS-blue.svg) ![Swift](https://img.shields.io/badge/Swift-5.0-orange.svg) ![License](https://img.shields.io/badge/license-MIT-lightgrey.svg)
 
 ## 效果预览
 
@@ -146,33 +146,9 @@ class ControlDetailViewController: UIViewController {
 - 🎓 **面试准备者**：掌握常见控件的特性和使用场景
 - 🔧 **项目参考**：作为新项目的起点或代码参考
 
-## 贡献
-
-欢迎提交 Issue 和 Pull Request 来改进这个项目！
-
-1. Fork 本项目
-2. 创建特性分支 (`git checkout -b feature/AmazingFeature`)
-3. 提交更改 (`git commit -m 'Add some AmazingFeature'`)
-4. 推送到分支 (`git push origin feature/AmazingFeature`)
-5. 开启 Pull Request
-
 ## 许可证
 
 本项目采用 MIT 许可证 - 查看 [LICENSE](LICENSE) 文件了解详情。
-
-## 更新日志
-
-### v1.0.0
-- 初始版本发布
-- 支持 14 个 UIKit 控件演示
-- 纯代码实现，无 Storyboard
-
-## 联系方式
-
-如有问题或建议，请通过以下方式联系：
-
-- 提交 [Issue](https://github.com/wumacms/UIKitControlsDemo/issues)
-- 微信交流：lumadada
 
 ---
 
